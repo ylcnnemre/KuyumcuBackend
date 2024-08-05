@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text.Json;
 using KuyumcuWebApi.dto;
+using KuyumcuWebApi.exception;
 
 namespace KuyumcuWebApi.middeware;
 
@@ -18,6 +19,34 @@ public class ExceptionHandlingMiddleware
         try
         {
             await _next(context);
+        }
+        catch (UnauthorizedException ex)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.ContentType = "application/json";
+            var errorResponse = new ErrorResponse
+            {
+                Error = "Unauthorize",
+                Message = ex.Message,
+                Details = string.Empty
+            };
+            var jsonResponse = JsonSerializer.Serialize(errorResponse);
+            await context.Response.WriteAsync(jsonResponse);
+        }
+        catch (ConflictException ex)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+            context.Response.ContentType = "application/json";
+
+            var errorResponse = new ErrorResponse
+            {
+                Error = "Conflict",
+                Message = ex.Message,
+                Details = string.Empty
+            };
+
+            var jsonResponse = JsonSerializer.Serialize(errorResponse);
+            await context.Response.WriteAsync(jsonResponse);
         }
         catch (Exception ex)
         {

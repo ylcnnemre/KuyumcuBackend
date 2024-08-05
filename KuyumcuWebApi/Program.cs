@@ -1,6 +1,11 @@
 using System.Text;
+using FluentValidation.AspNetCore;
 using KuyumcuWebApi.Context;
+using KuyumcuWebApi.dto;
 using KuyumcuWebApi.middeware;
+using KuyumcuWebApi.middleware;
+using KuyumcuWebApi.Rules;
+using KuyumcuWebApi.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,23 +15,32 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers().AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+builder.Services.AddControllers().
+AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore).AddFluentValidation(fv =>
+{
+    fv.RegisterValidatorsFromAssemblyContaining<UserLoginDto>();
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
-    options.TokenValidationParameters = new TokenValidationParameters(){
-        ValidateAudience=true,
-        ValidateIssuer=true,
+builder.Services.AddScoped<AuthService, AuthService>();
+builder.Services.AddScoped<RegisterRules, RegisterRules>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateAudience = true,
+        ValidateIssuer = true,
         ValidateLifetime = true,
-        ValidateIssuerSigningKey=true,
+        ValidateIssuerSigningKey = true,
         ValidIssuer = "ab",
         ValidAudience = "ab",
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
             builder.Configuration["Token:SecurityKey"]
         )),
-        ClockSkew=TimeSpan.Zero
+        ClockSkew = TimeSpan.Zero
     };
 });
 
@@ -53,7 +67,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<CustomAuthorizationMiddleware>();
+/* app.UseMiddleware<CustomAuthorizationMiddleware>(); */
 
 app.UseSwagger();
 app.UseSwaggerUI();

@@ -2,6 +2,7 @@
 using KuyumcuWebApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KuyumcuWebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240805222402_mig2")]
+    partial class mig2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +39,7 @@ namespace KuyumcuWebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("roles", (string)null);
+                    b.ToTable("Role");
 
                     b.HasData(
                         new
@@ -88,17 +91,12 @@ namespace KuyumcuWebApi.Migrations
             modelBuilder.Entity("KuyumcuWebApi.Models.User", b =>
                 {
                     b.HasOne("KuyumcuWebApi.Models.Role", "role")
-                        .WithMany("users")
+                        .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("role");
-                });
-
-            modelBuilder.Entity("KuyumcuWebApi.Models.Role", b =>
-                {
-                    b.Navigation("users");
                 });
 #pragma warning restore 612, 618
         }

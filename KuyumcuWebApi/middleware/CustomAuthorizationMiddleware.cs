@@ -1,36 +1,87 @@
 using KuyumcuWebApi.dto;
+using KuyumcuWebApi.exception;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace KuyumcuWebApi.middeware;
-public class CustomAuthorizationMiddleware
+namespace KuyumcuWebApi.middleware
 {
-    private readonly RequestDelegate _next;
-
-    public CustomAuthorizationMiddleware(RequestDelegate next)
+    public class CustomAuthorizationMiddleware
     {
-        _next = next;
-    }
+        private readonly RequestDelegate _next;
 
-    public async Task InvokeAsync(HttpContext context)
-    {
-        await _next(context);
-
-        if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+        public CustomAuthorizationMiddleware(RequestDelegate next)
         {
-            context.Response.ContentType = "application/json";
+            _next = next;
+        }
 
-            var errorResponse = new ErrorResponse
+        public async Task InvokeAsync(HttpContext context)
+        {
+            try
             {
-                Error = "Unauthorized",
-                Message = "You are not authorized to access this resource.",
-                Details = string.Empty
-            };
+                await _next(context);
 
-            var jsonResponse = JsonSerializer.Serialize(errorResponse);
-            await context.Response.WriteAsync(jsonResponse);
+                if (context.Response.StatusCode == (int)HttpStatusCode.Unauthorized)
+                {
+                    context.Response.ContentType = "application/json";
+
+                    var errorResponse = new ErrorResponse
+                    {
+                        Error = "Unauthorized",
+                        Message = "You are not authorized to access this resource.",
+                        Details = string.Empty
+                    };
+
+                    var jsonResponse = JsonSerializer.Serialize(errorResponse);
+                    await context.Response.WriteAsync(jsonResponse);
+                }
+                /* else if (context.Response.StatusCode == (int)HttpStatusCode.Forbidden)
+                {
+                    context.Response.ContentType = "application/json";
+
+                    var errorResponse = new ErrorResponse
+                    {
+                        Error = "Forbidden",
+                        Message = "You are not authorized to access this resource.",
+                        Details = string.Empty
+                    };
+
+                    var jsonResponse = JsonSerializer.Serialize(errorResponse);
+                    await context.Response.WriteAsync(jsonResponse);
+                } */
+            }
+            catch (ConflictException ex)
+            {
+                context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+                context.Response.ContentType = "application/json";
+
+                var errorResponse = new ErrorResponse
+                {
+                    Error = "Conflict",
+                    Message = ex.Message,
+                    Details = string.Empty
+                };
+
+                var jsonResponse = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonResponse);
+            }
+            catch (Exception ex)
+            {
+                // Diğer istisnalar için genel bir işleyici
+                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                context.Response.ContentType = "application/json";
+
+                var errorResponse = new ErrorResponse
+                {
+                    Error = "Internal Server Error",
+                    Message = ex.Message,
+                    Details = string.Empty
+                };
+
+                var jsonResponse = JsonSerializer.Serialize(errorResponse);
+                await context.Response.WriteAsync(jsonResponse);
+            }
         }
     }
 }

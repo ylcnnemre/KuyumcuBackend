@@ -11,9 +11,9 @@ public class TokenHandler {
         Token token= new Token();
         var claims = new List<Claim>
         {
-            new Claim("name", "ax"),
+          
             new Claim(ClaimTypes.Name, "emre"),
-            new Claim("CustomClaim", "CustomValue")
+            new Claim(ClaimTypes.Role,"Admin")
         };
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])
