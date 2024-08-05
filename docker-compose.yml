@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  webapi:
+    build:
+      context: ./KuyumcuWebApi
+      dockerfile: Dockerfile
+    ports:
+      - "5118:5280"  # Yerel 5118 portunu konteynerin 5280 portuna yönlendir
+    depends_on:
+      - postgres
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    ports:
+      - "5432:5432"
