@@ -14,7 +14,7 @@ public class TokenHandler
         Token token = new Token();
         var claims = new List<Claim>
         {
-            new Claim("id",user.ToString()),
+            new Claim("id",user.Id.ToString()),
             new Claim("email",user.Email),
             new Claim("firstName",user.FirstName),
             new Claim("lastName",user.LastName),
