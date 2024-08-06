@@ -1,37 +1,43 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using KuyumcuWebApi.Models;
 using Microsoft.IdentityModel.Tokens;
 
 namespace KuyumcuWebApi.Security;
 
-public class TokenHandler {
+public class TokenHandler
+{
 
-    public static Token CreateToken(IConfiguration configuration) {
-        Token token= new Token();
+    public static Token CreateToken(IConfiguration configuration, User user)
+    {
+        Token token = new Token();
         var claims = new List<Claim>
         {
-          
-            new Claim(ClaimTypes.Name, "emre"),
-            new Claim(ClaimTypes.Role,"Admin")
+            new Claim("id",user.ToString()),
+            new Claim("email",user.Email),
+            new Claim("firstName",user.FirstName),
+            new Claim("lastName",user.LastName),
+            new Claim(ClaimTypes.Name, user.FirstName),
+            new Claim(ClaimTypes.Role,user.role.Name)
         };
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(
             Encoding.UTF8.GetBytes(configuration["Token:SecurityKey"])
         );
-        SigningCredentials credentials= new SigningCredentials(securityKey,SecurityAlgorithms.HmacSha256);
+        SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        token.Expiration=DateTime.Now.AddMinutes(Convert.ToInt16(configuration["Token:Expiration"]));
+        token.Expiration = DateTime.Now.AddMinutes(Convert.ToInt16(configuration["Token:Expiration"]));
 
-        JwtSecurityToken jwtSecurityToken= new JwtSecurityToken(
-            issuer : "ab",
-            audience : "ab",
-            expires : token.Expiration,
-            notBefore : DateTime.Now,
-            claims : claims,
-            signingCredentials : credentials
+        JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
+            issuer: "ab",
+            audience: "ab",
+            expires: token.Expiration,
+            notBefore: DateTime.Now,
+            claims: claims,
+            signingCredentials: credentials
         );
 
-        JwtSecurityTokenHandler tokenHandler= new();
+        JwtSecurityTokenHandler tokenHandler = new();
         token.AccessToken = tokenHandler.WriteToken(jwtSecurityToken);
 
         return token;

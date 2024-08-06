@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using KuyumcuWebApi.Context;
 using KuyumcuWebApi.dto;
 using KuyumcuWebApi.middeware;
-using KuyumcuWebApi.middleware;
+using KuyumcuWebApi.Repository;
 using KuyumcuWebApi.Rules;
 using KuyumcuWebApi.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -25,7 +25,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<AuthService, AuthService>();
+builder.Services.AddScoped<UserService,UserService>();
 builder.Services.AddScoped<RegisterRules, RegisterRules>();
+builder.Services.AddScoped<IUserRepository,UserRepository>();
+
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -67,6 +70,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+app.UseMiddleware<CustomAuthorizationMiddleware>();
 /* app.UseMiddleware<CustomAuthorizationMiddleware>(); */
 
 app.UseSwagger();

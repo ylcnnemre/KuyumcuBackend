@@ -53,10 +53,7 @@ public class AuthController : ControllerBase
     {
         var result = await authService.Login(userLoginDto);
 
-
-        return Ok(new {
-             data = result
-        });
+        return Ok(result);
     }
 
 

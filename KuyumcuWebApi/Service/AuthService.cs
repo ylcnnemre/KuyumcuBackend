@@ -3,6 +3,7 @@ using KuyumcuWebApi.dto;
 using KuyumcuWebApi.exception;
 using KuyumcuWebApi.Models;
 using KuyumcuWebApi.Rules;
+using KuyumcuWebApi.Security;
 using Microsoft.EntityFrameworkCore;
 
 namespace KuyumcuWebApi.Service;
@@ -52,22 +53,22 @@ public class AuthService
     }
 
 
-    public async Task<User> Login(UserLoginDto loginDto)
+    public async Task<Token> Login(UserLoginDto loginDto)
     {
-        var selectedUser = await appContext.users.FirstOrDefaultAsync(item => item.Email == loginDto.email);
+        var selectedUser = await appContext.users.Include(el => el.role).FirstOrDefaultAsync(item => item.Email == loginDto.email);
         /* Token token = TokenHandler.CreateToken(configuration); */
         if (selectedUser is null)
         {
             throw new UnauthorizedException("Böyle bir kullanıcı bulunamadı");
         }
-
-        bool passwordMatch = VerifyPassword(loginDto.password, selectedUser.Password);
-
-        if (!passwordMatch){
+        bool passwordMatch = VerifyPassword(selectedUser.Password,loginDto.password);
+        if (!passwordMatch)
+        {
             throw new UnauthorizedException("Şifre yanlış");
         }
+        Token token = TokenHandler.CreateToken(configuration, selectedUser);
 
-        return selectedUser;
+        return token;
     }
 
     public async Task<List<Role>> getAllRoles()
