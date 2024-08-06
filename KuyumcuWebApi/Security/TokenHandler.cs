@@ -18,6 +18,7 @@ public class TokenHandler
             new Claim("email",user.Email),
             new Claim("firstName",user.FirstName),
             new Claim("lastName",user.LastName),
+            new Claim("role",user.role.Name),
             new Claim(ClaimTypes.Name, user.FirstName),
             new Claim(ClaimTypes.Role,user.role.Name)
         };
