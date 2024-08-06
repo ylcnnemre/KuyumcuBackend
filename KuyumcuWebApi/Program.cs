@@ -25,9 +25,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<AuthService, AuthService>();
-builder.Services.AddScoped<UserService,UserService>();
+builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<RegisterRules, RegisterRules>();
-builder.Services.AddScoped<IUserRepository,UserRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -61,6 +61,8 @@ using (var scope = app.Services.CreateScope())
     try
     {
         await dbContext.Database.CanConnectAsync();
+        var migrateElement = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        migrateElement.Database.Migrate();
         Console.WriteLine("Database connection successful.");
     }
     catch (Exception ex)
