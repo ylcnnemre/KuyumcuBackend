@@ -4,7 +4,7 @@ project.lock.json
 .DS_Store
 *.pyc
 nupkg/
-
+KuyumcuWebApi/wwwroot/images/*
 # Visual Studio Code
 .vscode/
 
