@@ -26,9 +26,13 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<AuthService, AuthService>();
 builder.Services.AddScoped<UserService, UserService>();
+builder.Services.AddScoped<ProductService,ProductService>();
+builder.Services.AddScoped<ProductImageService,ProductImageService>();
+builder.Services.AddScoped<FileService,FileService>();
 builder.Services.AddScoped<RegisterRules, RegisterRules>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
+builder.Services.AddScoped<IProductRepository,ProductRepository>();
+builder.Services.AddScoped<IProductImageRepository,ProductImageRepository>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -70,7 +74,7 @@ using (var scope = app.Services.CreateScope())
         Console.WriteLine($"Database connection failed: {ex.Message}");
     }
 }
-
+app.UseStaticFiles();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<CustomAuthorizationMiddleware>();
 /* app.UseMiddleware<CustomAuthorizationMiddleware>(); */

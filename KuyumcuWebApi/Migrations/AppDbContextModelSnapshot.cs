@@ -21,6 +21,69 @@ namespace KuyumcuWebApi.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("KuyumcuWebApi.Models.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Karat")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Material")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("products");
+                });
+
+            modelBuilder.Entity("KuyumcuWebApi.Models.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("productImages");
+                });
+
             modelBuilder.Entity("KuyumcuWebApi.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -85,6 +148,17 @@ namespace KuyumcuWebApi.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("KuyumcuWebApi.Models.ProductImage", b =>
+                {
+                    b.HasOne("KuyumcuWebApi.Models.Product", "Product")
+                        .WithMany("productImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("KuyumcuWebApi.Models.User", b =>
                 {
                     b.HasOne("KuyumcuWebApi.Models.Role", "role")
@@ -94,6 +168,11 @@ namespace KuyumcuWebApi.Migrations
                         .IsRequired();
 
                     b.Navigation("role");
+                });
+
+            modelBuilder.Entity("KuyumcuWebApi.Models.Product", b =>
+                {
+                    b.Navigation("productImages");
                 });
 
             modelBuilder.Entity("KuyumcuWebApi.Models.Role", b =>
