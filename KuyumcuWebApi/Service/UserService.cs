@@ -1,6 +1,8 @@
+using KuyumcuWebApi.dto;
 using KuyumcuWebApi.exception;
 using KuyumcuWebApi.Models;
 using KuyumcuWebApi.Repository;
+using KuyumcuWebApi.Rules;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KuyumcuWebApi.Service;
@@ -8,10 +10,11 @@ namespace KuyumcuWebApi.Service;
 public class UserService
 {
     private readonly IUserRepository userRepository;
-
-    public UserService(IUserRepository userRepository)
+    private readonly UserUpdateRules userUpdateRules;
+    public UserService(IUserRepository userRepository, UserUpdateRules userUpdateRules)
     {
         this.userRepository = userRepository;
+        this.userUpdateRules = userUpdateRules;
     }
 
     public async Task<List<User>> GetAllUserService()
@@ -61,4 +64,68 @@ public class UserService
         };
         return formatUser;
     }
+
+
+    public async Task<User> updateUser(UpdateUserRequestDto updateUserRequestDto)
+    {
+        var selectedUser = await userRepository.getByIdAsync(updateUserRequestDto.userId);
+        if (selectedUser is null)
+        {
+            throw new NotFoundException("Kullanıcı bulunamadı");
+        }
+        await userUpdateRules.emailControl(updateUserRequestDto.Email);
+        await userUpdateRules.phoneControl(updateUserRequestDto.Phone);
+
+
+        selectedUser.Phone = updateUserRequestDto.Phone;
+        selectedUser.Email = updateUserRequestDto.Email;
+        selectedUser.FirstName = updateUserRequestDto.Email;
+        selectedUser.LastName = updateUserRequestDto.LastName;
+        var updateElement = await userRepository.updateAsync(selectedUser);
+
+        var User = new User()
+        {
+            Id = updateElement.Id,
+            FirstName = updateElement.FirstName,
+            LastName = updateElement.LastName,
+            Phone = updateElement.Phone,
+            Email = updateElement.Email,
+            role = new Role(){
+                Id = selectedUser.role.Id,
+                Name = selectedUser.role.Name
+            },
+            RoleId = updateElement.RoleId,
+            isActive = updateElement.isActive
+        };
+
+        return User;
+    }
+
+
+    public async Task<User> updateUserStatus(UserStatusRequestDto userStatusRequestDto)
+    {
+        var selectedUser = await userRepository.getByIdAsync(userStatusRequestDto.UserId);
+        if (selectedUser is null)
+        {
+            throw new NotFoundException("Kullanıcı bulunamadı");
+        }
+
+        selectedUser.isActive = userStatusRequestDto.isActive;
+        var updateUser= await userRepository.updateAsync(selectedUser);
+        var newUser = new User(){
+            Id = updateUser.Id, 
+            FirstName = updateUser.FirstName,
+            LastName = updateUser.LastName,
+            Email = updateUser.Email,
+            isActive= updateUser.isActive,
+            Phone = updateUser.Phone,
+            role = new Role(){
+                Id = selectedUser.role.Id,
+                Name = selectedUser.role.Name
+            },
+            RoleId = updateUser.RoleId
+        };
+        return newUser;
+    }
+
 }

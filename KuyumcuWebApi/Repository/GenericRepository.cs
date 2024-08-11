@@ -7,7 +7,7 @@ namespace KuyumcuWebApi.Repository;
 
 public class GenericRepository<T> : IGenericRepository<T> where T : class
 {
-    private readonly AppDbContext _context;
+    protected readonly AppDbContext _context;
     private readonly DbSet<T> dbset;
 
     public GenericRepository(AppDbContext context)

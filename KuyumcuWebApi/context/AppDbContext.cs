@@ -34,6 +34,13 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>()
          .Property(p => p.Id)
          .ValueGeneratedOnAdd(); // Otomatik artırma
+
+
+        modelBuilder.Entity<Product>()
+      .HasMany(p => p.productImages)
+      .WithOne(pi => pi.Product)
+      .HasForeignKey(pi => pi.ProductId)
+      .OnDelete(DeleteBehavior.Cascade);
     }
 
 }

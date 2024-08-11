@@ -27,7 +27,5 @@ public class RegisterRules
             throw new ConflictException("bu email zaten mevcut");
         }
     }
-
     
-
 }

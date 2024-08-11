@@ -44,6 +44,8 @@ public class AuthService
             Email = registerDto.Email,
             Password = HashPassword(registerDto.Password),
             RoleId = registerDto.RoleId,
+            Phone = registerDto.Phone,
+            isActive = true,
             role = roleInfo
         };
         appContext.users.Add(createdUser);
@@ -61,7 +63,7 @@ public class AuthService
         {
             throw new UnauthorizedException("Böyle bir kullanıcı bulunamadı");
         }
-        bool passwordMatch = VerifyPassword(selectedUser.Password,loginDto.password);
+        bool passwordMatch = VerifyPassword(selectedUser.Password, loginDto.password);
         if (!passwordMatch)
         {
             throw new UnauthorizedException("Şifre yanlış");

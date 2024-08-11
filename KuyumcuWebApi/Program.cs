@@ -30,6 +30,7 @@ builder.Services.AddScoped<ProductService,ProductService>();
 builder.Services.AddScoped<ProductImageService,ProductImageService>();
 builder.Services.AddScoped<FileService,FileService>();
 builder.Services.AddScoped<RegisterRules, RegisterRules>();
+builder.Services.AddScoped<UserUpdateRules,UserUpdateRules>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository,ProductImageRepository>();

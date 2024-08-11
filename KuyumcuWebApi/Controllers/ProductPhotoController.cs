@@ -18,7 +18,10 @@ public class ProductPhotoController : Controller
     public async Task<IActionResult> AddProductPhoto([FromForm] AddProductPhotoDto addProductPhotoDto)
     {
         var response = await productPhotoService.AddProductPhoto(addProductPhotoDto);
-        return Ok(response);
+        return Ok(new SuccessResponseDto(){
+            message = "Fotoğraf eklendi",
+            data = response
+        });
     }
 
     [HttpDelete("{photoId}")]
