@@ -2,6 +2,7 @@
 using KuyumcuWebApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -10,9 +11,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KuyumcuWebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240815135706_mig9")]
+    partial class mig9
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,9 +44,6 @@ namespace KuyumcuWebApi.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
@@ -63,13 +63,6 @@ namespace KuyumcuWebApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
@@ -79,56 +72,11 @@ namespace KuyumcuWebApi.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("productId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("productId");
-
                     b.ToTable("orders");
-                });
-
-            modelBuilder.Entity("KuyumcuWebApi.Models.OrderStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("orderStatuses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            IsDeleted = false,
-                            Type = "Bekleyen"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            IsDeleted = false,
-                            Type = "Onaylanan"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            IsDeleted = false,
-                            Type = "Reddedilen"
-                        });
                 });
 
             modelBuilder.Entity("KuyumcuWebApi.Models.Product", b =>
@@ -146,9 +94,6 @@ namespace KuyumcuWebApi.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<int>("Karat")
                         .HasColumnType("integer");
@@ -183,9 +128,6 @@ namespace KuyumcuWebApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Path")
                         .IsRequired()
                         .HasColumnType("text");
@@ -208,9 +150,6 @@ namespace KuyumcuWebApi.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -224,13 +163,11 @@ namespace KuyumcuWebApi.Migrations
                         new
                         {
                             Id = 1,
-                            IsDeleted = false,
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            IsDeleted = false,
                             Name = "DefaultUser"
                         });
                 });
@@ -250,9 +187,6 @@ namespace KuyumcuWebApi.Migrations
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
 
                     b.Property<string>("LastName")
                         .IsRequired()
@@ -279,6 +213,21 @@ namespace KuyumcuWebApi.Migrations
                     b.ToTable("users");
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.Property<int>("OrdersId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("OrdersId", "ProductsId");
+
+                    b.HasIndex("ProductsId");
+
+                    b.ToTable("OrderProduct");
+                });
+
             modelBuilder.Entity("KuyumcuWebApi.Models.Address", b =>
                 {
                     b.HasOne("KuyumcuWebApi.Models.User", "User")
@@ -298,15 +247,7 @@ namespace KuyumcuWebApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("KuyumcuWebApi.Models.Product", "product")
-                        .WithMany("Orders")
-                        .HasForeignKey("productId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("User");
-
-                    b.Navigation("product");
                 });
 
             modelBuilder.Entity("KuyumcuWebApi.Models.ProductImage", b =>
@@ -331,10 +272,23 @@ namespace KuyumcuWebApi.Migrations
                     b.Navigation("role");
                 });
 
+            modelBuilder.Entity("OrderProduct", b =>
+                {
+                    b.HasOne("KuyumcuWebApi.Models.Order", null)
+                        .WithMany()
+                        .HasForeignKey("OrdersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("KuyumcuWebApi.Models.Product", null)
+                        .WithMany()
+                        .HasForeignKey("ProductsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("KuyumcuWebApi.Models.Product", b =>
                 {
-                    b.Navigation("Orders");
-
                     b.Navigation("productImages");
                 });
 
@@ -345,7 +299,8 @@ namespace KuyumcuWebApi.Migrations
 
             modelBuilder.Entity("KuyumcuWebApi.Models.User", b =>
                 {
-                    b.Navigation("address");
+                    b.Navigation("address")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

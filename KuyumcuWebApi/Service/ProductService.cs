@@ -2,6 +2,7 @@ using KuyumcuWebApi.dto;
 using KuyumcuWebApi.exception;
 using KuyumcuWebApi.Models;
 using KuyumcuWebApi.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace KuyumcuWebApi.Service;
 
@@ -83,7 +84,7 @@ public class ProductService
             Description = item.Description,
             Material = item.Material,
             Name = item.Name,
-            Karat= item.Karat,
+            Karat = item.Karat,
             productImages = item.productImages.Select(p => new ProductImage()
             {
                 Path = $"{baseUrl}{p.Path}",
@@ -98,7 +99,7 @@ public class ProductService
 
     public async Task<Product> getByProduct(int productId)
     {
-        var productElement = await productRepository.getByIdAsync(productId, el => el.productImages);
+        var productElement = await productRepository.getByIdAsync(productId, el => el.Include(item => item.productImages));
         if (productElement is null)
         {
             throw new NotFoundException("Ürün bulunamadı");
@@ -128,7 +129,7 @@ public class ProductService
 
     public async Task<Product> updateProduct(UpdateProductRequestDto updateProductRequestDto)
     {
-        var product = await productRepository.getByIdAsync(updateProductRequestDto.Id);
+        var product = await productRepository.getByIdAsync(updateProductRequestDto.Id, null);
         if (product is null)
         {
             throw new NotFoundException("Ürün bulunamadı");

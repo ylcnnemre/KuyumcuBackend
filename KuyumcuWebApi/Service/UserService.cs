@@ -4,6 +4,7 @@ using KuyumcuWebApi.Models;
 using KuyumcuWebApi.Repository;
 using KuyumcuWebApi.Rules;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace KuyumcuWebApi.Service;
 
@@ -21,7 +22,7 @@ public class UserService
     {
         var userList = await userRepository.getAllAsync(
         null,               // Filtreleme 
-        u => u.role
+        u => u.role 
     );
         var formatList = userList.Select(item => new User
         {
@@ -42,7 +43,7 @@ public class UserService
 
     public async Task<User> getById(int userId)
     {
-        User user = await userRepository.getByIdAsync(userId, u => u.role);
+        User user = await userRepository.getByIdAsync(userId, u => u.Include(x => x.role));
 
         if (user is null)
         {
@@ -68,7 +69,7 @@ public class UserService
 
     public async Task<User> updateUser(UpdateUserRequestDto updateUserRequestDto)
     {
-        var selectedUser = await userRepository.getByIdAsync(updateUserRequestDto.userId);
+        var selectedUser = await userRepository.getByIdAsync(updateUserRequestDto.userId,null);
         if (selectedUser is null)
         {
             throw new NotFoundException("Kullanıcı bulunamadı");
@@ -104,7 +105,7 @@ public class UserService
 
     public async Task<User> updateUserStatus(UserStatusRequestDto userStatusRequestDto)
     {
-        var selectedUser = await userRepository.getByIdAsync(userStatusRequestDto.UserId);
+        var selectedUser = await userRepository.getByIdAsync(userStatusRequestDto.UserId,null);
         if (selectedUser is null)
         {
             throw new NotFoundException("Kullanıcı bulunamadı");

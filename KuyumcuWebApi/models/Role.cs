@@ -2,9 +2,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace KuyumcuWebApi.Models;
 
-public class Role {
-    [Key]
-    public int Id { get; set; }
+public class Role:BaseModel {
+    
 
     [Required]
     [MaxLength(50)]

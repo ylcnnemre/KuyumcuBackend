@@ -21,7 +21,7 @@ public class ProductImageService
 
     public async Task<ProductImage> AddProductPhoto(AddProductPhotoDto productPhotoDto)
     {
-        var productControl = await productRepository.getByIdAsync(productPhotoDto.ProductId);
+        var productControl = await productRepository.getByIdAsync(productPhotoDto.ProductId,null);
         if (productControl is null)
         {
             throw new NotFoundException("Böyle bir ürün bulunamadı");
@@ -38,7 +38,7 @@ public class ProductImageService
 
     public async Task deletePhoto(int photoId)
     {
-        var selectedProductImage = await productImageRepository.getByIdAsync(photoId);
+        var selectedProductImage = await productImageRepository.getByIdAsync(photoId,null);
         if (selectedProductImage is null)
         {
             throw new NotFoundException("fotoğraf bulunamadı");

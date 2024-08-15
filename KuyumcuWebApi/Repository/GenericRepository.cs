@@ -28,6 +28,10 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         dbset.Remove(entity);
     }
 
+    public DbSet<T> Query()
+    {
+        return dbset;
+    }
     public async Task<List<T>> getAllAsync(Expression<Func<T, bool>> filter = null, params Expression<Func<T, object>>[] includeProperties)
     {
         IQueryable<T> query = dbset;
@@ -45,13 +49,15 @@ public class GenericRepository<T> : IGenericRepository<T> where T : class
         return await query.ToListAsync();
     }
 
-    public async Task<T> getByIdAsync(int id, params Expression<Func<T, object>>[] includeProperties)
+    public async Task<T> getByIdAsync(int id, Func<IQueryable<T>, IQueryable<T>> includeProperties=null)
     {
         IQueryable<T> query = dbset;
-        foreach (var includeProperty in includeProperties)
+
+        if (includeProperties != null)
         {
-            query = query.Include(includeProperty);
+            query = includeProperties(query);
         }
+
         return await query.SingleOrDefaultAsync(entity => EF.Property<int>(entity, "Id") == id);
     }
     public async Task<int> saveChangesAsync()
