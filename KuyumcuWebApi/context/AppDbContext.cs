@@ -10,9 +10,9 @@ public class AppDbContext : DbContext
     public DbSet<Role> roles { get; set; }
     public DbSet<Product> products { get; set; }
     public DbSet<ProductImage> productImages { get; set; }
-    public DbSet<Address> addresses {get;set;}
-    public DbSet<Order> orders {get;set;}
-    public DbSet<OrderStatus > orderStatus {get;set;}
+    public DbSet<Address> addresses { get; set; }
+    public DbSet<Order> orders { get; set; }
+    public DbSet<OrderStatus> orderStatus { get; set; }
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
 
@@ -40,20 +40,43 @@ public class AppDbContext : DbContext
       .HasForeignKey(pi => pi.ProductId)
       .OnDelete(DeleteBehavior.Cascade);
 
-      modelBuilder.Entity<OrderStatus>().HasData(
-        new OrderStatus() {
-            Id = 1,
-            Type = "Bekleyen"
-        },
-        new OrderStatus(){
-            Id = 2,
-            Type = "Onaylanan"
-        },
-        new OrderStatus(){
-            Id = 3,
-            Type = "Reddedilen"
-        }
-      );
+        modelBuilder.Entity<OrderStatus>().ToTable("orderStatus");
+        modelBuilder.Entity<OrderStatus>().HasData(
+          new OrderStatus()
+          {
+              Id = 1,
+              Type = "Bekleyen"
+          },
+          new OrderStatus()
+          {
+              Id = 2,
+              Type = "Onaylanan"
+          },
+          new OrderStatus()
+          {
+              Id = 3,
+              Type = "Reddedilen"
+          }
+        );
     }
 
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.Entity is BaseModel &&
+                        (e.State == EntityState.Added || e.State == EntityState.Modified));
+
+        foreach (var entityEntry in entries)
+        {
+            ((BaseModel)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
+
+            if (entityEntry.State == EntityState.Added)
+            {
+                ((BaseModel)entityEntry.Entity).CreatedAt = DateTime.UtcNow;
+            }
+        }
+
+        return base.SaveChangesAsync(cancellationToken);
+    }
 }

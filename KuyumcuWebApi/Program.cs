@@ -29,12 +29,13 @@ builder.Services.AddScoped<UserService, UserService>();
 builder.Services.AddScoped<ProductService,ProductService>();
 builder.Services.AddScoped<ProductImageService,ProductImageService>();
 builder.Services.AddScoped<FileService,FileService>();
+builder.Services.AddScoped<OrderService,OrderService>();
 builder.Services.AddScoped<RegisterRules, RegisterRules>();
 builder.Services.AddScoped<UserUpdateRules,UserUpdateRules>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IProductRepository,ProductRepository>();
 builder.Services.AddScoped<IProductImageRepository,ProductImageRepository>();
-
+builder.Services.AddScoped<IOrderRepository,OrderRepository>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters()
