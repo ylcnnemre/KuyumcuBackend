@@ -63,7 +63,21 @@ public class ExceptionHandlingMiddleware
             var jsonResponse = JsonSerializer.Serialize(errorResponse);
             await context.Response.WriteAsync(jsonResponse);
         }
+        catch (BadRequestException ex)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            context.Response.ContentType = "application/json";
 
+            var errorResponse = new ErrorResponse
+            {
+                Error = "Bad Request",
+                Message = ex.Message,
+                Details = string.Empty
+            };
+
+            var jsonResponse = JsonSerializer.Serialize(errorResponse);
+            await context.Response.WriteAsync(jsonResponse);
+        }
         catch (Exception ex)
         {
             // Log the exception (you can use a logging framework here)

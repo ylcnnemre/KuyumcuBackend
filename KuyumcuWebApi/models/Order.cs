@@ -10,5 +10,4 @@ public class Order:BaseModel {
     public User User  {get;set;}
     public int OrderStatusId {get;set;}
     public OrderStatus orderStatus {get;set;}
-
 }

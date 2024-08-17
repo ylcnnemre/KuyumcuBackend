@@ -75,7 +75,7 @@ public class AuthService
 
     public async Task<List<Role>> getAllRoles()
     {
-        var list = await appContext.roles.Include(item => item.users).ToListAsync();
+        var list = await appContext.roles.ToListAsync();
         return list;
     }
 

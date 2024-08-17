@@ -40,7 +40,6 @@ public class AppDbContext : DbContext
       .HasForeignKey(pi => pi.ProductId)
       .OnDelete(DeleteBehavior.Cascade);
 
-        modelBuilder.Entity<OrderStatus>().ToTable("orderStatus");
         modelBuilder.Entity<OrderStatus>().HasData(
           new OrderStatus()
           {
@@ -55,7 +54,7 @@ public class AppDbContext : DbContext
           new OrderStatus()
           {
               Id = 3,
-              Type = "Reddedilen"
+              Type = "İptal"
           }
         );
     }

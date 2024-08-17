@@ -18,13 +18,13 @@ public class UserService
         this.userUpdateRules = userUpdateRules;
     }
 
-    public async Task<List<User>> GetAllUserService()
+    public async Task<List<User>> GetAllUserService(PagedRequestDto pagedRequestDto)
     {
-        var userList = await userRepository.getAllAsync(
+        var userList = await userRepository.getAllAsync(pagedRequestDto.PageIndex,pagedRequestDto.PageSize,
         null,               // Filtreleme 
-        u => u.role 
+        u => u.Include(x => x.role) 
     );
-        var formatList = userList.Select(item => new User
+        var formatList = userList.Items.Select(item => new User
         {
             Email = item.Email,
             Id = item.Id,

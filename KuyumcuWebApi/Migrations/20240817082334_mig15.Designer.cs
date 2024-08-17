@@ -3,6 +3,7 @@ using System;
 using KuyumcuWebApi.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace KuyumcuWebApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240817082334_mig15")]
+    partial class mig15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,6 +98,9 @@ namespace KuyumcuWebApi.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("isCanceled")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderStatusId");
@@ -129,29 +135,29 @@ namespace KuyumcuWebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("orderStatus");
+                    b.ToTable("orderStatus", (string)null);
 
                     b.HasData(
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 17, 12, 35, 3, 98, DateTimeKind.Utc).AddTicks(2395),
+                            CreatedAt = new DateTime(2024, 8, 17, 8, 23, 33, 883, DateTimeKind.Utc).AddTicks(2648),
                             IsDeleted = false,
                             Type = "Bekleyen"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 17, 12, 35, 3, 98, DateTimeKind.Utc).AddTicks(2398),
+                            CreatedAt = new DateTime(2024, 8, 17, 8, 23, 33, 883, DateTimeKind.Utc).AddTicks(2652),
                             IsDeleted = false,
                             Type = "Onaylanan"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedAt = new DateTime(2024, 8, 17, 12, 35, 3, 98, DateTimeKind.Utc).AddTicks(2399),
+                            CreatedAt = new DateTime(2024, 8, 17, 8, 23, 33, 883, DateTimeKind.Utc).AddTicks(2653),
                             IsDeleted = false,
-                            Type = "İptal"
+                            Type = "Reddedilen"
                         });
                 });
 
@@ -266,14 +272,14 @@ namespace KuyumcuWebApi.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedAt = new DateTime(2024, 8, 17, 12, 35, 3, 98, DateTimeKind.Utc).AddTicks(304),
+                            CreatedAt = new DateTime(2024, 8, 17, 8, 23, 33, 883, DateTimeKind.Utc).AddTicks(711),
                             IsDeleted = false,
                             Name = "Admin"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedAt = new DateTime(2024, 8, 17, 12, 35, 3, 98, DateTimeKind.Utc).AddTicks(307),
+                            CreatedAt = new DateTime(2024, 8, 17, 8, 23, 33, 883, DateTimeKind.Utc).AddTicks(716),
                             IsDeleted = false,
                             Name = "DefaultUser"
                         });
