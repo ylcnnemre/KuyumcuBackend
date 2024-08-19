@@ -21,12 +21,12 @@ public class UserController : Controller
     [HttpPost("[Action]")]
     public async Task<IActionResult> GetAllUser([FromBody] PagedRequestDto pagedRequestDto )
     {
-        ICollection<User> userlist = await this.userService.GetAllUserService(pagedRequestDto);
+        var result = await this.userService.GetAllUserService(pagedRequestDto);
 
         return Ok(new SuccessResponseDto()
         {
             message = "başarılı",
-            data = userlist
+            data = result
         });
     }
 

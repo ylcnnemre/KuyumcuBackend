@@ -18,7 +18,7 @@ public class UserService
         this.userUpdateRules = userUpdateRules;
     }
 
-    public async Task<List<User>> GetAllUserService(PagedRequestDto pagedRequestDto)
+    public async Task<PagedResultDto<User>> GetAllUserService(PagedRequestDto pagedRequestDto)
     {
         var userList = await userRepository.getAllAsync(pagedRequestDto.PageIndex,pagedRequestDto.PageSize,
         null,               // Filtreleme 
@@ -37,8 +37,8 @@ public class UserService
             },   // Sadece rolü getiriyoruz, rolün içindeki kullanıcılar gelmeyecek
             RoleId = item.RoleId
         }).ToList();
-
-        return formatList;
+        userList.Items = formatList;    
+        return userList;
     }
 
     public async Task<User> getById(int userId)

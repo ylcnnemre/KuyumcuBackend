@@ -32,7 +32,7 @@ public class AuthService
     }
 
 
-    public async Task<User> Register(RegisterDto registerDto)
+    public async Task<RegisterResponseDto> Register(RegisterDto registerDto)
     {
         await registerRules.uniqueUserControl(registerDto);
 
@@ -50,8 +50,16 @@ public class AuthService
         };
         appContext.users.Add(createdUser);
         await appContext.SaveChangesAsync();
-        createdUser.Password=null;
-        return createdUser;
+        var selectedUser = await appContext.users.Include(el => el.role).FirstOrDefaultAsync(item => item.Email == registerDto.Email);
+        Token token = TokenHandler.CreateToken(configuration, selectedUser);
+        createdUser.Password = null;
+        selectedUser.Password = null;
+        return new RegisterResponseDto()
+        {
+            AccessToken = token.AccessToken,
+            Expiration = token.Expiration,
+            User = selectedUser
+        };
     }
 
 
