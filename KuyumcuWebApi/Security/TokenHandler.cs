@@ -28,7 +28,7 @@ public class TokenHandler
         );
         SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-        token.Expiration = DateTime.Now.AddYears(100);
+        token.Expiration = DateTime.Now.AddMinutes(Convert.ToInt16(configuration["Token:Expiration"]));
 
         JwtSecurityToken jwtSecurityToken = new JwtSecurityToken(
             issuer: "ab",
