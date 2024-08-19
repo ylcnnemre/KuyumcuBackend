@@ -16,7 +16,8 @@ public class RegisterRules
     }
     public async Task uniqueUserControl(RegisterDto registerDto)
     {
-       await emailControl(registerDto.Email);
+        await emailControl(registerDto.Email);
+        await phoneControl(registerDto.Phone);
     }
 
     private async Task emailControl(string email)
@@ -27,5 +28,13 @@ public class RegisterRules
             throw new ConflictException("bu email zaten mevcut");
         }
     }
-    
+
+    private async Task phoneControl(string phone)
+    {
+        var result = await appDbContext.users.AnyAsync(item => item.Phone == phone);
+        if (result)
+        {
+           throw new ConflictException("bu telefon zaten kayıtlı"); 
+        }
+    }
 }

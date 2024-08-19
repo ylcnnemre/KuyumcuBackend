@@ -19,35 +19,6 @@ public class AuthController : ControllerBase
         this.authService = authService;
     }
 
-    /* [HttpPost]
-    public IActionResult Index([FromBody] UserLoginModel userLogin)
-    {
-        Token token = TokenHandler.CreateToken(configuration);
-
-        return Ok(token);
-    } */
-
-    /* [HttpGet("[Action]")]
-    [Authorize]
-    public IActionResult Secure()
-    {
-
-        return Ok(new
-        {
-            message = "selam1x"
-        });
-    }
-
-    [HttpGet("[Action]")]
-    [Authorize(Roles = "User")]
-    public IActionResult RoleAuth()
-    {
-        return Ok(new
-        {
-            message = "çalışıyor"
-        });
-    } */
-
     [HttpPost("[Action]")]
     public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
     {

@@ -50,7 +50,7 @@ public class AuthService
         };
         appContext.users.Add(createdUser);
         await appContext.SaveChangesAsync();
-
+        createdUser.Password=null;
         return createdUser;
     }
 
