@@ -55,7 +55,7 @@ public class AuthService
     }
 
 
-    public async Task<Token> Login(UserLoginDto loginDto)
+    public async Task<LoginResponseDto> Login(UserLoginDto loginDto)
     {
         var selectedUser = await appContext.users.Include(el => el.role).FirstOrDefaultAsync(item => item.Email == loginDto.email);
         /* Token token = TokenHandler.CreateToken(configuration); */
@@ -69,8 +69,13 @@ public class AuthService
             throw new UnauthorizedException("Şifre yanlış");
         }
         Token token = TokenHandler.CreateToken(configuration, selectedUser);
-
-        return token;
+        selectedUser.Password = null;
+        return new LoginResponseDto()
+        {
+            AccessToken = token.AccessToken,
+            Expiration = token.Expiration,
+            User = selectedUser,
+        };
     }
 
     public async Task<List<Role>> getAllRoles()
