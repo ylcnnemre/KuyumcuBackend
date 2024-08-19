@@ -63,7 +63,7 @@ public class GenericRepository<T> : IGenericRepository<T> where T : BaseModel
         }
         else
         {
-            var items = await query.Skip(pageIndex * pageSize)
+            var items = await query.Skip((pageIndex - 1) * pageSize)
                       .Take(pageSize)
                       .ToListAsync();
             var total = await query.CountAsync();
