@@ -51,4 +51,19 @@ public class AuthController : ControllerBase
             data = roleList
         });
     }
+
+
+    [HttpGet("[Action]")]
+    [Authorize]
+    public async Task<IActionResult> Check()
+    {
+        var userId = User.Claims.FirstOrDefault(item => item.Type == "id")?.Value;
+        var result = await authService.checkToken(int.Parse(userId));
+
+        return Ok(new SuccessResponseDto()
+        {
+            message = "Başarılı",
+            data = result,
+        });
+    }
 }

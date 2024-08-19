@@ -92,4 +92,13 @@ public class AuthService
         return list;
     }
 
+
+    public async Task<User> checkToken(int userId)
+    {
+        var user = await appContext.users.FirstOrDefaultAsync(item => item.Id == userId);
+        
+        user.Password = null;
+
+        return user;
+    }
 }
